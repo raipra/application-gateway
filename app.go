@@ -85,6 +85,7 @@ func formatJSON(data []byte) string {
 	if err := json.Indent(&result, data, "", "  "); err != nil {
 		panic(fmt.Errorf("failed to parse JSON: %w", err))
 	}
+
 	return result.String()
 }
 

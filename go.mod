@@ -2,6 +2,7 @@ module github.com/raipra/gateway
 
 go 1.19
 
+
 require (
 	github.com/hyperledger/fabric-gateway v1.2.2
 	github.com/joho/godotenv v1.5.1
