@@ -23,11 +23,11 @@ import (
 
 const (
 	channelName   = "mychannel"
-	chaincodeName = "events"
+	chaincodeName = "ticket"
 )
 
 var now = time.Now()
-var assetID = fmt.Sprintf("asset%d", now.Unix()*1e3+int64(now.Nanosecond())/1e6)
+var assetID = "101215487"
 
 func main() {
 	clientConnection := newGrpcConnection()
@@ -51,14 +51,24 @@ func main() {
 	defer gateway.Close()
 
 	network := gateway.GetNetwork(channelName)
-
+	contract := network.GetContract(chaincodeName)
 	// Context used for event listening
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// Listen for events emitted by subsequent transactions
 	startChaincodeEventListening(ctx, network)
+	updateAsset(contract)
+}
+func updateAsset(contract *client.Contract) {
+	fmt.Printf("\n--> Submit transaction: UpdateAsset, %s update appraised value to 200\n", assetID)
 
+	_, err := contract.SubmitTransaction("UpdateTicketStatus", assetID, "Accepted")
+	if err != nil {
+		panic(fmt.Errorf("failed to submit transaction: %w", err))
+	}
+
+	fmt.Println("\n*** UpdateAsset committed successfully")
 }
 
 func startChaincodeEventListening(ctx context.Context, network *client.Network) {
@@ -71,6 +81,7 @@ func startChaincodeEventListening(ctx context.Context, network *client.Network) 
 
 	go func() {
 		for event := range events {
+			fmt.Printf("\n<-- Chaincode event received: %s - %s\n", event.EventName, formatJSON(event.Payload))
 			executeFunctionCall(event.Payload)
 			if err != nil {
 				fmt.Printf("\n<-- Unable to unmarshal the venet payload : %s", formatJSON(event.Payload))
