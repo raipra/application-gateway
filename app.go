@@ -205,9 +205,10 @@ func handleEvent(data []byte, eventName string) {
 	//asset := formatJSON(data)
 	switch eventName {
 	case "CreateAsset":
-		executeFunctionCall(data, goDotEnvVariable("FUNCTION_HANDLER_UPDATE"))
+		executeFunctionCall(data, goDotEnvVariable("POWERAPPS_URL"))
 	case "UpdateTicket":
 		executeFunctionCall(data, goDotEnvVariable("FUNCTION_HANDLER_UPDATE"))
+		executeFunctionCall(data, goDotEnvVariable("POWERAPPS_URL"))
 	case "SubmitClaim":
 		executeFunctionCall(data, goDotEnvVariable("FUNCTION_HANDLER_CLAIM"))
 	case "UpdateTicketStatus":
