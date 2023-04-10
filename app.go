@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"github.com/hyperledger/fabric-gateway/pkg/client"
+	"github.com/joho/godotenv"
 )
 
 const (
@@ -57,7 +58,7 @@ func main() {
 	defer cancel()
 
 	// Listen for events emitted by subsequent transactions
-	startChaincodeEventListening(ctx, network)
+	done := startChaincodeEventListening(ctx, network)
 
 	// firstBlockNumber := createAsset(contract)
 	// updateAsset(contract)
@@ -66,6 +67,7 @@ func main() {
 
 	// // Replay events from the block containing the first transaction
 	// replayChaincodeEvents(ctx, network, firstBlockNumber)
+	<-done
 }
 
 // func createAsset(contract *client.Contract) uint64 {
@@ -172,7 +174,8 @@ func main() {
 // 	}
 // }
 
-func startChaincodeEventListening(ctx context.Context, network *client.Network) {
+func startChaincodeEventListening(ctx context.Context, network *client.Network) chan bool {
+	done := make(chan bool)
 	fmt.Println("\n*** Start chaincode event listening")
 
 	events, err := network.ChaincodeEvents(ctx, chaincodeName)
@@ -183,14 +186,15 @@ func startChaincodeEventListening(ctx context.Context, network *client.Network) 
 	go func() {
 		for event := range events {
 			fmt.Printf("\n<-- Chaincode event received: %s - %s\n", event.EventName, formatJSON(event.Payload))
-			executeFunctionCall(event.Payload)
+			handleEvent(event.Payload, event.EventName)
 			if err != nil {
 				fmt.Printf("\n<-- Unable to unmarshal the venet payload : %s", formatJSON(event.Payload))
 			}
 			fmt.Printf("\n<-- Chaincode event received: %s - %s\n", event.EventName, formatJSON(event.Payload))
+			done <- true
 		}
 	}()
-
+	return done
 }
 func formatJSON(data []byte) string {
 	var result bytes.Buffer
