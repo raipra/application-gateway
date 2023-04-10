@@ -193,7 +193,6 @@ func startChaincodeEventListening(ctx context.Context, network *client.Network) 
 			if err != nil {
 				fmt.Printf("\n<-- Unable to unmarshal the venet payload : %s", formatJSON(event.Payload))
 			}
-			fmt.Printf("\n<-- Chaincode event received: %s - %s\n", event.EventName, formatJSON(event.Payload))
 			done <- true
 		}
 	}()
