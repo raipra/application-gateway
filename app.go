@@ -57,17 +57,20 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	// Listen for events emitted by subsequent transactions
-	done := startChaincodeEventListening(ctx, network)
+	for {
+		// Listen for events emitted by subsequent transactions
+		done := startChaincodeEventListening(ctx, network)
 
-	// firstBlockNumber := createAsset(contract)
-	// updateAsset(contract)
-	// transferAsset(contract)
-	// deleteAsset(contract)
+		// firstBlockNumber := createAsset(contract)
+		// updateAsset(contract)
+		// transferAsset(contract)
+		// deleteAsset(contract)
 
-	// // Replay events from the block containing the first transaction
-	// replayChaincodeEvents(ctx, network, firstBlockNumber)
-	<-done
+		// // Replay events from the block containing the first transaction
+		// replayChaincodeEvents(ctx, network, firstBlockNumber)
+		<-done
+
+	}
 }
 
 // func createAsset(contract *client.Contract) uint64 {
