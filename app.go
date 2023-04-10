@@ -233,7 +233,7 @@ func executeFunctionCall(body []byte, url string) error {
 	client := &http.Client{}
 	req, err := http.NewRequest(method, url, bytes.NewBuffer(body))
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Connection cannot be establish %v", err)
 		return err
 	}
 	req.Header.Add("Content-Type", "application/json")
