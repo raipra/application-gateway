@@ -233,7 +233,7 @@ func executeFunctionCall(body []byte, url string) error {
 	fmt.Println("Invoke URL %s", url)
 
 	// JSON body
-	client := &http.Client{}
+	client := &http.Client{Timeout: 20 * time.Second}
 	req, err := http.NewRequest(method, url, bytes.NewBuffer(body))
 	if err != nil {
 		fmt.Println("Connection cannot be establish %v", err)
