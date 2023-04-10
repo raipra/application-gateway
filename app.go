@@ -227,6 +227,7 @@ func handleEvent(data []byte, eventName string) {
 // Function to invoke HTTP Post to call the event handle azure function
 func executeFunctionCall(body []byte, url string) error {
 	method := "POST"
+	fmt.Println("Invoke URL %s", url)
 
 	// JSON body
 	client := &http.Client{}
@@ -238,14 +239,15 @@ func executeFunctionCall(body []byte, url string) error {
 	req.Header.Add("Content-Type", "application/json")
 	res, err := client.Do(req)
 	if err != nil {
-		fmt.Println(err)
+
+		fmt.Println("Unable to connect to the URL %v", err)
 		return err
 	}
 	defer res.Body.Close()
 
 	response, err := io.ReadAll(res.Body)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Unable to read the response %v", err)
 		return err
 	}
 	fmt.Println(string(response))
